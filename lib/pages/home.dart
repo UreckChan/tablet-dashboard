@@ -71,123 +71,116 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: !loading
           ? SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               child: SafeArea(
                 child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Image(image: AssetImage('assets/logo_face.png')),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: Column(
-                          children: [
-                            Text(
-                              "Autenticación con reconocimiento facial",
-                              style: TextStyle(
-                                  fontSize: 25, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 60,
-                            ),
-                          ],
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        // Image and Text Column
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Image(image: AssetImage('assets/logo_face.png')),
+                            ],
+                          ),
                         ),
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: 20,
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            child: Divider(
-                              thickness: 2,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => SignIn(),
+
+                        // Buttons Column
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.5,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            SignIn()),
+                                  );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color(0xFF0F0BDB),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        color: Colors.blue.withOpacity(0.1),
+                                        blurRadius: 1,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 14, horizontal: 16),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('Iniciar sesión',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                      SizedBox(width: 10),
+                                      Icon(Icons.login, color: Colors.white)
+                                    ],
+                                  ),
                                 ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.white,
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Colors.blue.withOpacity(0.1),
-                                    blurRadius: 1,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
                               ),
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 14, horizontal: 16),
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Iniciar sesión',
-                                    style: TextStyle(color: Color(0xFF0F0BDB)),
+                              SizedBox(height: 10),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            SignUp()),
+                                  );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.red,
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                        color: Colors.blue.withOpacity(0.1),
+                                        blurRadius: 1,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 10,
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 14, horizontal: 16),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.4,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('Registro',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                      SizedBox(width: 10),
+                                      Icon(Icons.person_add,
+                                          color: Colors.white)
+                                    ],
                                   ),
-                                  Icon(Icons.login, color: Color(0xFF0F0BDB))
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => SignUp(),
                                 ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Color(0xFF0F0BDB),
-                                boxShadow: <BoxShadow>[
-                                  BoxShadow(
-                                    color: Colors.blue.withOpacity(0.1),
-                                    blurRadius: 1,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
                               ),
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 14, horizontal: 16),
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Registro',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Icon(Icons.person_add, color: Colors.white)
-                                ],
-                              ),
-                            ),
-                          ),                          
-                        ],
-                      )
-                    ],
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),

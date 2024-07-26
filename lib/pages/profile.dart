@@ -1,68 +1,137 @@
 import 'dart:io';
-
-import 'package:face_net_authentication/pages/widgets/app_button.dart';
+import 'package:face_net_authentication/pages/widgets/BluetoothService.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'sala_page.dart';
+import 'cocina_page.dart';
+import 'garage_page.dart';
 import 'home.dart';
+import 'package:face_net_authentication/pages/widgets/app_button.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
   const Profile(this.username, {Key? key, required this.imagePath})
       : super(key: key);
   final String username;
   final String imagePath;
 
   @override
+  _ProfileState createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  late BluetoothService _bluetoothService;
+  bool _bluetoothState = false;
+  bool _isConnecting = false;
+  List<BluetoothDevice> _devices = [];
+  BluetoothDevice? _deviceConnected;
+
+  @override
+  void initState() {
+    super.initState();
+    _bluetoothService = BluetoothService();
+    _bluetoothService.bluetoothStateStream.listen((state) {
+      setState(() {
+        _bluetoothState = state;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _bluetoothService.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    initializeDateFormatting('es', null);
+
+    String formattedDate =
+        DateFormat('d \'de\' MMMM \'del\' yyyy', 'es').format(DateTime.now());
+
     return Scaffold(
       body: SafeArea(
         child: Container(
+          color: Colors.black, // Fondo negro
           child: Column(
             children: [
+              SizedBox(height: 20),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
+                    width:
+                        160, // Ajusta el ancho según el tamaño del avatar y el borde
+                    height:
+                        160, // Ajusta la altura según el tamaño del avatar y el borde
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.black,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: FileImage(File(imagePath)),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Color(0xFF272727), // El color del borde
+                        width: 10, // El grosor del borde
                       ),
                     ),
-                    margin: EdgeInsets.all(20),
-                    width: 50,
-                    height: 50,
+                    child: CircleAvatar(
+                      radius: 80, // Tamaño del avatar
+                      backgroundImage: FileImage(File(widget.imagePath)),
+                    ),
                   ),
-                  Text(
-                    'Hola ' + username + '!',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                  SizedBox(width: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Bienvenido, ${widget.username}',
+                        style: TextStyle(
+                            fontSize: 50,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      Text(
+                        formattedDate,
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    ],
                   ),
                 ],
               ),
+              SizedBox(height: 40),
               Container(
-                margin: EdgeInsets.all(20),
-                padding: EdgeInsets.all(20),
+                width: 100, // Tamaño del termómetro
+                height: 100,
                 decoration: BoxDecoration(
-                  color: Color(0xFFFEFFC1),
-                  borderRadius: BorderRadius.circular(10),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.blue, // Color del borde
+                    width: 5, // Ancho del borde
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.warning_amber_outlined,
-                      size: 30,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      '''¡Binvenido!''',
-                      style: TextStyle(fontSize: 16),
-                      textAlign: TextAlign.left,
-                    ),                    
-                  ],
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '23°',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        'C°',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Spacer(),
+              SizedBox(height: 20),
+              _buildBluetoothControl(),
+              _buildDeviceInfo(),
+              Expanded(child: _buildDeviceList()),
               AppButton(
                 text: "Salir",
                 onPressed: () {
@@ -85,5 +154,83 @@ class Profile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildBluetoothControl() {
+    return SwitchListTile(
+      value: _bluetoothState,
+      onChanged: (bool value) async {
+        if (value) {
+          await _bluetoothService.bluetooth.requestEnable();
+        } else {
+          await _bluetoothService.bluetooth.requestDisable();
+        }
+        setState(() {
+          _bluetoothState = value;
+        });
+      },
+      tileColor: Colors.black26,
+      title: Text(
+        _bluetoothState ? "Bluetooth encendido" : "Bluetooth apagado",
+      ),
+    );
+  }
+
+  Widget _buildDeviceInfo() {
+    return ListTile(
+      tileColor: Colors.black12,
+      title: Text(
+          "Conectado a: ${_bluetoothService.deviceConnected?.name ?? "ninguno"}"),
+      trailing: _bluetoothService.connection?.isConnected ?? false
+          ? TextButton(
+              onPressed: () async {
+                await _bluetoothService.disconnect();
+                setState(() {
+                  _deviceConnected = null;
+                });
+              },
+              child: const Text("Desconectar"),
+            )
+          : TextButton(
+              onPressed: () async {
+                await _bluetoothService.getDevices();
+                setState(() {
+                  _devices = _bluetoothService.devices;
+                });
+              },
+              child: const Text("Ver dispositivos"),
+            ),
+    );
+  }
+
+  Widget _buildDeviceList() {
+    return _bluetoothService.isConnecting
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Container(
+              color: Colors.grey.shade100,
+              child: Column(
+                children: [
+                  ...[
+                    for (final device in _devices)
+                      ListTile(
+                        title: Text(device.name ?? device.address),
+                        trailing: TextButton(
+                          child: const Text('conectar'),
+                          onPressed: () async {
+                            await _bluetoothService.connectToDevice(device);
+                            setState(() {
+                              _deviceConnected =
+                                  _bluetoothService.deviceConnected;
+                              _devices = [];
+                            });
+                          },
+                        ),
+                      )
+                  ]
+                ],
+              ),
+            ),
+          );
   }
 }

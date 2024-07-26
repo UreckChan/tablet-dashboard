@@ -53,103 +53,82 @@ class _ProfileState extends State<Profile> {
 
     return Scaffold(
       body: SafeArea(
-        child: Container(
-          color: Colors.black, // Fondo negro
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width:
-                        160, // Ajusta el ancho según el tamaño del avatar y el borde
-                    height:
-                        160, // Ajusta la altura según el tamaño del avatar y el borde
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Color(0xFF272727), // El color del borde
-                        width: 10, // El grosor del borde
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      radius: 80, // Tamaño del avatar
-                      backgroundImage: FileImage(File(widget.imagePath)),
-                    ),
-                  ),
-                  SizedBox(width: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Bienvenido, ${widget.username}',
-                        style: TextStyle(
-                            fontSize: 50,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                      Text(
-                        formattedDate,
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 40),
-              Container(
-                width: 100, // Tamaño del termómetro
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.blue, // Color del borde
-                    width: 5, // Ancho del borde
-                  ),
-                ),
-                child: Center(
-                  child: Column(
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical, // Desplazamiento vertical
+          child: Container(
+            color: Colors.black, // Fondo negro
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal, // Desplazamiento horizontal
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '23°',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      Container(
+                        width:
+                            160, // Ajusta el ancho según el tamaño del avatar y el borde
+                        height:
+                            160, // Ajusta la altura según el tamaño del avatar y el borde
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Color(0xFF272727), // El color del borde
+                            width: 10, // El grosor del borde
+                          ),
+                        ),
+                        child: CircleAvatar(
+                          radius: 80, // Tamaño del avatar
+                          backgroundImage: FileImage(File(widget.imagePath)),
                         ),
                       ),
-                      Text(
-                        'C°',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      SizedBox(width: 20),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Bienvenido, ${widget.username}',
+                            style: TextStyle(
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            formattedDate,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              _buildBluetoothControl(),
-              _buildDeviceInfo(),
-              Expanded(child: _buildDeviceList()),
-              AppButton(
-                text: "Salir",
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MyHomePage()),
-                  );
-                },
-                icon: Icon(
-                  Icons.logout,
-                  color: Colors.white,
+                SizedBox(height: 20),
+                _buildBluetoothControl(),
+                _buildDeviceInfo(),
+                _buildDeviceList(),
+                SizedBox(height: 20),
+                AppButton(
+                  text: "Salir",
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyHomePage()),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.logout,
+                    color: Colors.white,
+                  ),
+                  color: Color(0xFFFF6161),
                 ),
-                color: Color(0xFFFF6161),
-              ),
-              SizedBox(
-                height: 20,
-              )
-            ],
+                SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
@@ -169,7 +148,7 @@ class _ProfileState extends State<Profile> {
           _bluetoothState = value;
         });
       },
-      tileColor: Colors.black26,
+      tileColor: Colors.white,
       title: Text(
         _bluetoothState ? "Bluetooth encendido" : "Bluetooth apagado",
       ),
@@ -178,7 +157,7 @@ class _ProfileState extends State<Profile> {
 
   Widget _buildDeviceInfo() {
     return ListTile(
-      tileColor: Colors.black12,
+      tileColor: Colors.white,
       title: Text(
           "Conectado a: ${_bluetoothService.deviceConnected?.name ?? "ninguno"}"),
       trailing: _bluetoothService.connection?.isConnected ?? false

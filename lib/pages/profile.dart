@@ -112,6 +112,32 @@ class _ProfileState extends State<Profile> {
                 _buildDeviceInfo(),
                 _buildDeviceList(),
                 SizedBox(height: 20),
+                 SizedBox(height: 20),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildIconButton(Icons.meeting_room, 'SALA', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SalaPage()),
+                      );
+                    }),
+                    _buildIconButton(Icons.kitchen, 'COCINA', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => CocinaPage()),
+                      );
+                    }),
+                    _buildIconButton(Icons.garage, 'GARAGE', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GaragePage()),
+                      );
+                    }),
+                  ],
+                ),
+              ),
                 AppButton(
                   text: "Salir",
                   onPressed: () {
@@ -212,4 +238,23 @@ class _ProfileState extends State<Profile> {
             ),
           );
   }
+
+
+  Widget _buildIconButton(IconData icon, String label, VoidCallback onPressed) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: Icon(icon, size: 30, color: Colors.white),
+          onPressed: onPressed,
+        ),
+        SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(fontSize: 12, color: Colors.white),
+        ),
+      ],
+    );
+  }
 }
+

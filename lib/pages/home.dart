@@ -1,4 +1,4 @@
-// import 'package:face_net_authentication/constants/constants.dart';
+import 'package:face_net_authentication/constants/constants.dart';
 import 'package:face_net_authentication/locator.dart';
 import 'package:face_net_authentication/pages/db/databse_helper.dart';
 import 'package:face_net_authentication/pages/sign-in.dart';
